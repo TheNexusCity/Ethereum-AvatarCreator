@@ -6,6 +6,9 @@ import DownloadCharacter from "./Download"
 import LoadingOverlayCircularStatic from "./LoadingOverlay"
 import { sceneService } from "../services"
 import Scene from "./Scene"
+import ConnectMint from "./ConnectMint"
+import { Web3ReactProvider } from "@web3-react/core"
+import { Web3Provider } from "@ethersproject/providers";
 
 interface Avatar{
   hair:{},
@@ -31,6 +34,12 @@ export default function CharacterEditor(props: any) {
   // const [materials, setMaterials] = useState<object>(Object);
   // const [animations, setAnimations] = useState<object>(Object);
   // const [body, setBody] = useState<any>();
+
+  function getLibrary(provider: any): Web3Provider {
+    const library = new Web3Provider(provider);
+    library.pollingInterval = 12000;
+    return library;
+  }
 
   const { theme, templates, mintPopup } = props
   // Selected category State Hook
@@ -114,6 +123,11 @@ export default function CharacterEditor(props: any) {
               downloadPopup={downloadPopup}
               setDownloadPopup={setDownloadPopup}
             />
+
+            <Web3ReactProvider getLibrary={getLibrary}>
+              <ConnectMint />
+            </Web3ReactProvider>
+
             <Scene
               wrapClass="generator"
               templates={templates}
