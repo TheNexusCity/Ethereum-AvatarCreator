@@ -40,8 +40,8 @@ const style = {
   px: 4,
   pb: 3,
 };
-// const API_URL = "http://localhost:8081";
-const API_URL = "http://34.214.42.55:8081";
+const API_URL = "http://localhost:8081";
+// const API_URL = "http://34.214.42.55:8081";
 
 export default function ConnectMint() {
   const { ethereum }: any = window;
@@ -110,34 +110,6 @@ export default function ConnectMint() {
     }
   };
 
-  const alertModal = async (msg: string) => {
-    setAlertTitle(msg);
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false);
-    }, 4000);
-  };
-
-  const sendWhitelist = async () => {
-    try {
-      const message = ethers.utils.solidityKeccak256(
-        ["address", "address"],
-        [contractAddress, account]
-      );
-      const arrayifyMessage = ethers.utils.arrayify(message);
-      const flatSignature = await library
-        .getSigner()
-        .signMessage(arrayifyMessage);
-      const response = await axios.post(`${API_URL}/new-request`, {
-        signature: flatSignature,
-        address: account,
-      });
-      alertModal(response.data.msg);
-    } catch (ex) {
-      console.log(ex);
-    }
-  };
-
   const generateMintFiles = async () => {
     setMintLoading(true);
     threeService
@@ -152,6 +124,14 @@ export default function ConnectMint() {
           });
         }
       });
+  };
+
+  const alertModal = async (msg: string) => {
+    setAlertTitle(msg);
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 4000);
   };
 
   const mintAvatar = async () => {
@@ -290,6 +270,26 @@ export default function ConnectMint() {
     setMintPopup(false);
   };
 
+  const sendWhitelist = async () => {
+    try {
+      const message = ethers.utils.solidityKeccak256(
+        ["address", "address"],
+        [contractAddress, account]
+      );
+      const arrayifyMessage = ethers.utils.arrayify(message);
+      const flatSignature = await library
+        .getSigner()
+        .signMessage(arrayifyMessage);
+      const response = await axios.post(`${API_URL}/new-request`, {
+        signature: flatSignature,
+        address: account,
+      });
+      alertModal(response.data.msg);
+    } catch (ex) {
+      console.log(ex);
+    }
+  };
+
   return (
     <>
       <div className="connect-mint-wrap">
@@ -324,7 +324,7 @@ export default function ConnectMint() {
             >
               Mint
             </Button>
-            <p>{account ? account.slice(0, 13) + "..." : ""}</p>
+            <p style={{ color: 'white' }}>{account ? account.slice(0, 13) + "..." : ""}</p>
           </>
         )}
         <Modal
